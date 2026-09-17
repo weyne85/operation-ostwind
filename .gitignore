@@ -10,3 +10,7 @@ Moose*.lua
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Sicherungen und Zwischenstände von tools/pack_sounds.py
+*.miz.bak
+*.miz.tmp
