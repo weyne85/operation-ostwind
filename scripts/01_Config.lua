@@ -30,6 +30,37 @@ OSTWIND.Config = {
     -- true: Spielstand beim nächsten Start ignorieren und neu beginnen.
     -- Der alte Stand wird als .reset.bak gesichert. Danach wieder auf false.
     Reset = false,
+    -- Zusätzlich speichern, wenn eine Zone den Besitzer wechselt (10_Save.lua)
+    OnCapture  = true,
+    EventDelay = 5,           -- Sekunden Wartezeit, mehrere Ereignisse ergeben eine Speicherung
+    Menu       = true,        -- F10-Menü "Kampagne > Stand speichern" für Blau
+  },
+
+  -- Truppen und Fracht (08_CTLD.lua) -------------------------------------------
+  -- Alle Vorlagen: Koalition Blau, spät aktiviert, beliebiger Ort.
+  -- Ladezonen: Jede Frontzone ist Ladezone, solange sie blau ist.
+  -- Abgesetzte Truppen laufen selbst in die nächste Frontzone (bis MoveDistance).
+
+  CTLD = {
+    Enabled  = true,
+    -- Namensanfang der Spieler-Gruppen, die Fracht transportieren dürfen
+    Prefixes = { "BLUE_SLOT_Chinook", "BLUE_SLOT_Hind", "BLUE_SLOT_Apache" },
+    MoveDistance = 5000,      -- Meter: so weit laufen abgesetzte Truppen zur Zone
+    BuildTime    = 180,       -- Sekunden zum Aufbau von Kisten
+    -- Ladezone auf dem Träger (Einheit aus Carrier.UnitName)
+    ShipZone     = { Enabled = true, Length = 330, Width = 75 },
+    Troops = {
+      -- Name im Menü, Vorlage, Anzahl Soldaten, Masse je Soldat in kg
+      { Name = "Infanterie (8)",   Template = "BLUE_TPL_CTLD_Infantry",  Count = 8, Mass = 80 },
+      { Name = "Panzerabwehr (4)", Template = "BLUE_TPL_CTLD_ATGM",      Count = 4, Mass = 90 },
+      { Name = "Pioniere (4)",     Template = "BLUE_TPL_CTLD_Engineers", Count = 4, Mass = 80, Engineers = true },
+    },
+    Crates = {
+      -- Name im Menü, Vorlage, Anzahl Kisten, Masse je Kiste in kg
+      { Name = "Humvee TOW",     Template = "BLUE_TPL_CTLD_TOW",     Crates = 1, Mass = 500 },
+      { Name = "Avenger",        Template = "BLUE_TPL_CTLD_Avenger", Crates = 2, Mass = 500 },
+      { Name = "M1126 Stryker",  Template = "BLUE_TPL_CTLD_Stryker", Crates = 2, Mass = 500 },
+    },
   },
 
   -- Flugplätze --------------------------------------------------------------

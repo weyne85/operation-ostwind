@@ -4,6 +4,7 @@ Persistente, dynamische Kampagne für DCS World auf der Karte Caucasus. Blau bef
 
 - Solo spielbar, optional Mehrspieler
 - Schwierigkeit passt sich an die Spielerzahl an
+- Truppen und Fracht mit CTLD für Chinook, Hind und Apache
 - Rot mit Besatzungen, Nachschub, Gegenangriffen, Luftabwehr und Jägern
 - Carrier Strike Group mit AIRBOSS, Recovery-Tanker, AWACS, Rettungshubschrauber und Zufallsflügen
 - Fortschritt bleibt zwischen Sessions erhalten
@@ -45,9 +46,9 @@ scripts/
 ├── 05_Red.lua         Besatzungen, Nachschub, Gegenangriffe, Luftabwehr, Jäger
 ├── 06_Blue.lua        (offen)
 ├── 07_Carrier.lua     Carrier Strike Group mit AIRBOSS
-├── 08_CTLD.lua        (offen)
+├── 08_CTLD.lua        Truppen und Fracht
 ├── 09_Tasks.lua       (offen)
-└── 10_Save.lua        (offen)
+└── 10_Save.lua        Automatisches Speichern
 tools/
 └── pack_sounds.py     Packt die Sprachdateien in die .miz
 ```
@@ -157,7 +158,22 @@ Frequenzen und TACAN setzen die Skripte selbst (Standard):
 | Tanker | 261.0 AM | TACAN 37Y ARC |
 | AWACS | 262.0 AM | |
 
-### Schritt 6: Rote Vorlagen für Bodentruppen (6 Stück)
+### Schritt 6: Blaue Vorlagen für Truppen und Fracht (6 Stück)
+
+Diese Gruppen setzen Chinook, Hind und Apache ab. Alle auf **Blau**, alle mit **„Späte Aktivierung“**. Ort beliebig, zum Beispiel bei Batumi. Einheitennamen sind frei.
+
+| Gruppenname | Inhalt (Vorschlag) | Menüeintrag |
+| --- | --- | --- |
+| `BLUE_TPL_CTLD_Infantry` | 8 × Infanterie M4 | Infanterie (8) |
+| `BLUE_TPL_CTLD_ATGM` | 4 × Infanterie mit Javelin oder RPG | Panzerabwehr (4) |
+| `BLUE_TPL_CTLD_Engineers` | 4 × Infanterie M4 | Pioniere (4), können Kisten bauen |
+| `BLUE_TPL_CTLD_TOW` | 1 × Humvee TOW | Humvee TOW (1 Kiste) |
+| `BLUE_TPL_CTLD_Avenger` | 1 × M1097 Avenger | Avenger (2 Kisten) |
+| `BLUE_TPL_CTLD_Stryker` | 1 × M1126 Stryker ICV | M1126 Stryker (2 Kisten) |
+
+Die Anzahl der Soldaten muss zur Config passen (8, 4 und 4). Eigene Ladezonen brauchst du nicht: Jede Frontzone ist Ladezone, solange sie blau ist, dazu der Träger. Die Spieler-Slots für den Transport müssen mit `BLUE_SLOT_Chinook`, `BLUE_SLOT_Hind` oder `BLUE_SLOT_Apache` beginnen (Schritt 10).
+
+### Schritt 7: Rote Vorlagen für Bodentruppen (6 Stück)
 
 Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig, am besten weit weg von der Front, zum Beispiel bei Mozdok. Einheitennamen sind frei. Die Aufstellung der Einheiten in der Vorlage wird beim Erzeugen übernommen.
 
@@ -170,7 +186,7 @@ Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig, am besten
 | `RED_TPL_ATK_Armor` | 4 × T-72B | Gegenangriff |
 | `RED_TPL_ATK_Mech` | 2 × BMP-3, 2 × BTR-80 | Gegenangriff |
 
-### Schritt 7: Rote Vorlagen für Luftabwehr und Radar (6 Stück)
+### Schritt 8: Rote Vorlagen für Luftabwehr und Radar (6 Stück)
 
 Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig. Stell die Einheiten innerhalb der Gruppe so auf, wie die Stellung später aussehen soll, zum Beispiel Radar in der Mitte und Starter im Kreis darum. Tipp: Der Editor bietet für viele Stellungen fertige Gruppen-Vorlagen an.
 
@@ -185,7 +201,7 @@ Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig. Stell die
 
 MANTIS erkennt den Typ der Stellung selbst an den Einheiten. Wichtig ist nur, dass jede Stellung mindestens ein Radar hat.
 
-### Schritt 8: Rote Jäger
+### Schritt 9: Rote Jäger
 
 **Lagerhäuser:** Auf jedem der drei Flugplätze ein **statisches Objekt** auf **Rot** platzieren, Kategorie Gebäude, Typ **Lagerhaus** (Warehouse). Der Name muss genau wie der Flugplatz lauten:
 
@@ -203,7 +219,7 @@ MANTIS erkennt den Typ der Stellung selbst an den Einheiten. Wichtig ist nur, da
 | `RED_TPL_CAP_Su27` | Su-27 | 2 |
 | `RED_TPL_GCI_MiG31` | MiG-31 | 2 |
 
-### Schritt 9: Spieler-Slots
+### Schritt 10: Spieler-Slots
 
 Für jedes Muster eine Gruppe auf **Blau**, Fähigkeit **Client**. Name mit dem Präfix `BLUE_SLOT_`. Nicht spät aktiviert.
 
@@ -216,9 +232,9 @@ Für jedes Muster eine Gruppe auf **Blau**, Fähigkeit **Client**. Name mit dem 
 | `BLUE_SLOT_Chinook 1` | CH-47F | Senaki-Kolkhi |
 | `BLUE_SLOT_Hind 1` | Mi-24P | Senaki-Kolkhi |
 
-Für mehrere Spieler weitere Gruppen anlegen, zum Beispiel `BLUE_SLOT_Hornet 2`.
+Für mehrere Spieler weitere Gruppen anlegen, zum Beispiel `BLUE_SLOT_Hornet 2`. Nur Gruppen mit `BLUE_SLOT_Chinook`, `BLUE_SLOT_Hind` oder `BLUE_SLOT_Apache` am Anfang bekommen das CTLD-Menü.
 
-### Schritt 10: Skripte einbinden
+### Schritt 11: Skripte einbinden
 
 1. Neuer Trigger, Typ **„Einmalig“** (Once), Name zum Beispiel `Ostwind Start`.
 2. Bedingung: keine. Ereignis: **„Mission Start“**.
@@ -229,7 +245,7 @@ Der Loader lädt alle weiteren Skripte bei jedem Start direkt aus dem Repo-Ordne
 
 **Fertige Version für den Server:** Statt des Loaders alle Skripte ab `01_Config.lua` einzeln per „DO SCRIPT FILE“ einbinden, in der Reihenfolge der Nummern. Sonst fehlen sie auf einem anderen Rechner.
 
-### Schritt 11: Speichern und Sprachdateien packen
+### Schritt 12: Speichern und Sprachdateien packen
 
 1. Mission speichern und den Editor schließen.
 2. Im Repo-Ordner ausführen:
@@ -239,16 +255,17 @@ Der Loader lädt alle weiteren Skripte bei jedem Start direkt aus dem Repo-Ordne
    ```
 
    Das Skript legt eine Sicherung `.miz.bak` an und packt die 110 Sprachdateien in den Ordner `Airboss Soundfiles` der Mission.
-3. Nach jedem weiteren Speichern im Editor prüfen, ob der Ordner noch in der `.miz` ist. Die `.miz` ist ein Zip-Archiv und lässt sich zum Beispiel mit 7-Zip öffnen. Fehlt der Ordner, Schritt 2 wiederholen.
+3. Nach jedem weiteren Speichern im Editor prüfen, ob der Ordner noch in der `.miz` ist. Die `.miz` ist ein Zip-Archiv und lässt sich zum Beispiel mit 7-Zip öffnen. Fehlt der Ordner, Punkt 2 wiederholen.
 
-### Schritt 12: Erster Test
+### Schritt 13: Erster Test
 
 1. Mission starten und einen Slot wählen.
 2. Nach dem Start erscheint: „Operation Ostwind. Aktuelles Ziel: Kutaisi“.
 3. Auf der F10-Karte sind die Zonen farbig eingezeichnet.
 4. Am Träger starten nach kurzer Zeit Tanker, AWACS und Hubschrauber.
 5. Nach der Mission in `dcs.log` nach `[Ostwind]` suchen. Zeilen mit `ERROR` zeigen fehlende Namen oder andere Probleme.
-6. Einen Spielstand gibt es erst, wenn gespeichert wird. Das automatische Speichern kommt mit `10_Save.lua`. Danach liegt er unter `Saved Games\DCS\Missions\Saves\Operation Ostwind\`.
+6. Im F10-Menü gibt es „Kampagne > Stand speichern“. Nach dem Speichern liegt der Stand unter `Saved Games\DCS\Missions\Saves\Operation Ostwind\`.
+7. Mit einem Chinook oder Hind in einer blauen Zone landen, im F10-Menü unter CTLD Truppen laden und in `Zone Kutaisi` absetzen. Sind dort keine roten Einheiten mehr, wird die Zone nach 60 Sekunden blau.
 
 ### Checkliste
 
@@ -258,7 +275,8 @@ Der Loader lädt alle weiteren Skripte bei jedem Start direkt aus dem Repo-Ordne
 | Trigger-Zonen Front | 11 |
 | Trigger-Zonen Luftabwehr, Radar, CAP | 11 |
 | Träger-Einheit `CVN-75 Truman` | 1 |
-| Blaue Vorlagen (spät aktiviert) | 5 |
+| Blaue Vorlagen Träger (spät aktiviert) | 5 |
+| Blaue Vorlagen CTLD (spät aktiviert) | 6 |
 | Rote Vorlagen Boden (spät aktiviert) | 6 |
 | Rote Vorlagen Luftabwehr und Radar (spät aktiviert) | 6 |
 | Rote Vorlagen Jäger (spät aktiviert) | 3 |
@@ -292,6 +310,20 @@ Die aktive Phase ist die erste Phase mit einer Zone, die nicht blau ist. Blau ka
 
 Der Faktor gilt für die Sollstärke beim Nachschub, für die Größe der Gegenangriffe und für die Zahl gleichzeitiger Abfangeinsätze. Die Besatzungen einer neuen Kampagne entstehen ohne Faktor, weil beim Missionsstart noch niemand im Slot sitzt.
 
+### Truppen und Fracht
+
+- **Laden:** in jeder blauen Frontzone und auf dem Träger, über das F10-Menü von CTLD
+- **Absetzen:** Truppen, die bis zu 5 km vor der aktuellen Zielzone abgesetzt werden, laufen selbst hinein.
+- **Kisten:** Fahrzeuge kommen in Kisten und werden vor Ort gebaut (3 Minuten).
+- **Speichern:** Abgesetzte Truppen und gebaute Fahrzeuge speichert CTLD in `Ostwind_CTLD.csv`.
+
+### Speichern
+
+- alle 5 Minuten
+- kurz nach jeder Eroberung und nach dem Sieg
+- beim Missionsende
+- über das F10-Menü „Kampagne > Stand speichern“
+
 ### Carrier Strike Group
 
 Gesteuert von MOOSE AIRBOSS. Der Träger fährt seine Route aus dem Editor in Schleife und dreht sich **nicht** selbständig in den Wind. Das Deck ist standardmäßig die ganze Mission offen. Feste Zeitfenster stellst du in `01_Config.lua` unter `Carrier.Recovery.Windows` ein. Die LSO-Noten werden im Speicherordner gesichert.
@@ -308,6 +340,7 @@ Liegt unter `Saved Games/DCS/Missions/Saves/Operation Ostwind/`:
 | `Ostwind.sav.lua.bak` | vorheriger Stand, wird geladen, wenn der aktuelle defekt ist |
 | `*.reset.bak`, `*.v<N>.bak`, `*.defekt.bak` | Sicherungen bei Reset, Versionswechsel oder defekter Datei |
 | `Ostwind_LSO_Noten.csv` | Noten der Trägerlandungen |
+| `Ostwind_CTLD.csv` | abgesetzte Truppen und gebaute Fahrzeuge |
 
 **Neue Kampagne starten:** In `01_Config.lua` `Save.Reset = true` setzen, Mission einmal starten, danach wieder auf `false`.
 
@@ -326,7 +359,9 @@ Die Sprachdateien stammen aus [MOOSE_SOUND](https://github.com/FlightControl-Mas
 | 04_Scaling.lua | fertig |
 | 05_Red.lua | fertig |
 | 07_Carrier.lua | fertig |
+| 08_CTLD.lua | fertig |
+| 10_Save.lua | fertig |
 | tools/pack_sounds.py | fertig |
-| 06_Blue.lua, 08_CTLD.lua, 09_Tasks.lua, 10_Save.lua | offen |
+| 06_Blue.lua, 09_Tasks.lua | offen |
 
 Alle fertigen Skripte sind außerhalb von DCS mit nachgebauten DCS- und MOOSE-Funktionen getestet. Ein Test in DCS steht noch aus.
