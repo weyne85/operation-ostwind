@@ -5,6 +5,8 @@ Persistente, dynamische Kampagne für DCS World auf der Karte Caucasus. Blau bef
 - Solo spielbar, optional Mehrspieler
 - Schwierigkeit passt sich an die Spielerzahl an
 - Truppen und Fracht mit CTLD für Chinook, Hind und Apache
+- Blaue KI mit Besatzungen, AWACS, Tankern und Jägern
+- Aufträge im F10-Menü: CAS, BAI, SEAD, Abfangen und ein Lagebericht
 - Rot mit Besatzungen, Nachschub, Gegenangriffen, Luftabwehr und Jägern
 - Carrier Strike Group mit AIRBOSS, Recovery-Tanker, AWACS, Rettungshubschrauber und Zufallsflügen
 - Fortschritt bleibt zwischen Sessions erhalten
@@ -44,10 +46,10 @@ scripts/
 ├── 03_Zones.lua       Zonen und Frontverlauf
 ├── 04_Scaling.lua     Spieler zählen, Stufe festlegen
 ├── 05_Red.lua         Besatzungen, Nachschub, Gegenangriffe, Luftabwehr, Jäger
-├── 06_Blue.lua        (offen)
+├── 06_Blue.lua        Blaue Besatzungen, AWACS, Tanker, Radar, Jäger
 ├── 07_Carrier.lua     Carrier Strike Group mit AIRBOSS
 ├── 08_CTLD.lua        Truppen und Fracht
-├── 09_Tasks.lua       (offen)
+├── 09_Tasks.lua       Aufträge im F10-Menü und Lagebericht
 └── 10_Save.lua        Automatisches Speichern
 tools/
 └── pack_sounds.py     Packt die Sprachdateien in die .miz
@@ -104,7 +106,7 @@ Die Skripte erzeugen die roten Besatzungen selbst, zufällig verteilt in den inn
 
 **Wichtig:** Keine eigenen roten Bodeneinheiten in diese Zonen stellen. Sie würden nach dem Laden eines Spielstands eine schon befreite Zone sofort zurückerobern.
 
-### Schritt 4: Trigger-Zonen für Luftabwehr, Radar und Jäger (11 Stück)
+### Schritt 4: Trigger-Zonen für Luftabwehr, Radar und Jäger (13 Stück)
 
 Bei diesen Zonen zählt nur der **Mittelpunkt**. Dort entsteht die Stellung, mit derselben Aufstellung wie in der Vorlage. Der Radius ist egal. Nimm einen kleinen Wert, damit die Karte übersichtlich bleibt.
 
@@ -123,6 +125,8 @@ Stell die Stellungen auf freies, flaches Gelände, nicht in Wald oder auf Gebäu
 | `EWR Ost` | auf einer Anhöhe nördlich von Gori | 500 ft |
 | `RED CAP West` | über den Bergen zwischen Kutaisi und Nalchik | 5.000 ft |
 | `RED CAP Ost` | über den Bergen zwischen Gori und Beslan | 5.000 ft |
+| `BLUE EWR` | auf einer Anhöhe bei Kobuleti (blaues Radar) | 500 ft |
+| `BLUE CAP Front` | über der Linie Senaki und Kutaisi (blaue CAP) | 5.000 ft |
 
 Die SAM-Stellungen verschwinden, sobald Blau die zugehörige Zone erobert. Zerstörte Stellungen kommen auch nach dem Laden nicht zurück. Eine Stellung gilt als zerstört, wenn kein Radar mehr lebt.
 
@@ -171,9 +175,39 @@ Diese Gruppen setzen Chinook, Hind und Apache ab. Alle auf **Blau**, alle mit **
 | `BLUE_TPL_CTLD_Avenger` | 1 × M1097 Avenger | Avenger (2 Kisten) |
 | `BLUE_TPL_CTLD_Stryker` | 1 × M1126 Stryker ICV | M1126 Stryker (2 Kisten) |
 
-Die Anzahl der Soldaten muss zur Config passen (8, 4 und 4). Eigene Ladezonen brauchst du nicht: Jede Frontzone ist Ladezone, solange sie blau ist, dazu der Träger. Die Spieler-Slots für den Transport müssen mit `BLUE_SLOT_Chinook`, `BLUE_SLOT_Hind` oder `BLUE_SLOT_Apache` beginnen (Schritt 10).
+Die Anzahl der Soldaten muss zur Config passen (8, 4 und 4). Eigene Ladezonen brauchst du nicht: Jede Frontzone ist Ladezone, solange sie blau ist, dazu der Träger. Die Spieler-Slots für den Transport müssen mit `BLUE_SLOT_Chinook`, `BLUE_SLOT_Hind` oder `BLUE_SLOT_Apache` beginnen (Schritt 11).
 
-### Schritt 7: Rote Vorlagen für Bodentruppen (6 Stück)
+### Schritt 7: Blaue KI (9 Vorlagen, 2 Lagerhäuser)
+
+Alle auf **Blau**, alle mit **„Späte Aktivierung“**. Einheitennamen sind frei.
+
+**Besatzungen** für eroberte Zonen. Ort beliebig.
+
+| Gruppenname | Inhalt (Vorschlag) |
+| --- | --- |
+| `BLUE_TPL_GAR_Armor` | 2 × M1A2 Abrams |
+| `BLUE_TPL_GAR_IFV` | 3 × M2A2 Bradley |
+| `BLUE_TPL_GAR_AD` | 1 × M1097 Avenger, 1 × M6 Linebacker |
+
+**AWACS und Tanker von Land.** Diese Vorlagen fliegen genau so, wie du sie im Editor anlegst. Das Skript hält sie nur dauerhaft in der Luft.
+
+| Gruppenname | Typ | Start | Route und Aufgabe |
+| --- | --- | --- | --- |
+| `BLUE_TPL_AWACS` | E-3A | Kobuleti, Start von der Parkposition | Aufgabe AWACS. Wegpunkt mit „Umlaufbahn“ (Orbit) über Land zwischen Kobuleti und Senaki, 30.000 ft |
+| `BLUE_TPL_TANKER_Boom` | KC-135 | Kobuleti | Aufgabe Tanker, Aktion „Tanker“ und „Umlaufbahn“ westlich von Senaki, 20.000 ft. Funk, Rufzeichen und TACAN in der Vorlage setzen, zum Beispiel 251.0 AM, Texaco 1, TACAN 51X |
+| `BLUE_TPL_TANKER_Probe` | KC-135MPRS | Kobuleti | wie oben, zum Beispiel 252.0 AM, Shell 1, TACAN 52X |
+
+**Radar und Jäger.** Ort beliebig.
+
+| Gruppenname | Typ | Anzahl |
+| --- | --- | --- |
+| `BLUE_TPL_EWR` | EWR AN/FPS-117 oder 1L13 | 1 |
+| `BLUE_TPL_CAP_F15` | F-15C | 2 |
+| `BLUE_TPL_CAP_F16` | F-16C | 2 |
+
+**Lagerhäuser:** Auf zwei Flugplätzen ein **statisches Objekt** auf **Blau**, Typ **Lagerhaus**. Der Name muss genau wie der Flugplatz lauten: `Kobuleti` und `Senaki-Kolkhi`.
+
+### Schritt 8: Rote Vorlagen für Bodentruppen (6 Stück)
 
 Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig, am besten weit weg von der Front, zum Beispiel bei Mozdok. Einheitennamen sind frei. Die Aufstellung der Einheiten in der Vorlage wird beim Erzeugen übernommen.
 
@@ -186,7 +220,7 @@ Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig, am besten
 | `RED_TPL_ATK_Armor` | 4 × T-72B | Gegenangriff |
 | `RED_TPL_ATK_Mech` | 2 × BMP-3, 2 × BTR-80 | Gegenangriff |
 
-### Schritt 8: Rote Vorlagen für Luftabwehr und Radar (6 Stück)
+### Schritt 9: Rote Vorlagen für Luftabwehr und Radar (6 Stück)
 
 Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig. Stell die Einheiten innerhalb der Gruppe so auf, wie die Stellung später aussehen soll, zum Beispiel Radar in der Mitte und Starter im Kreis darum. Tipp: Der Editor bietet für viele Stellungen fertige Gruppen-Vorlagen an.
 
@@ -201,7 +235,7 @@ Alle auf **Rot**, alle mit **„Späte Aktivierung“**. Ort beliebig. Stell die
 
 MANTIS erkennt den Typ der Stellung selbst an den Einheiten. Wichtig ist nur, dass jede Stellung mindestens ein Radar hat.
 
-### Schritt 9: Rote Jäger
+### Schritt 10: Rote Jäger
 
 **Lagerhäuser:** Auf jedem der drei Flugplätze ein **statisches Objekt** auf **Rot** platzieren, Kategorie Gebäude, Typ **Lagerhaus** (Warehouse). Der Name muss genau wie der Flugplatz lauten:
 
@@ -219,7 +253,7 @@ MANTIS erkennt den Typ der Stellung selbst an den Einheiten. Wichtig ist nur, da
 | `RED_TPL_CAP_Su27` | Su-27 | 2 |
 | `RED_TPL_GCI_MiG31` | MiG-31 | 2 |
 
-### Schritt 10: Spieler-Slots
+### Schritt 11: Spieler-Slots
 
 Für jedes Muster eine Gruppe auf **Blau**, Fähigkeit **Client**. Name mit dem Präfix `BLUE_SLOT_`. Nicht spät aktiviert.
 
@@ -232,9 +266,9 @@ Für jedes Muster eine Gruppe auf **Blau**, Fähigkeit **Client**. Name mit dem 
 | `BLUE_SLOT_Chinook 1` | CH-47F | Senaki-Kolkhi |
 | `BLUE_SLOT_Hind 1` | Mi-24P | Senaki-Kolkhi |
 
-Für mehrere Spieler weitere Gruppen anlegen, zum Beispiel `BLUE_SLOT_Hornet 2`. Nur Gruppen mit `BLUE_SLOT_Chinook`, `BLUE_SLOT_Hind` oder `BLUE_SLOT_Apache` am Anfang bekommen das CTLD-Menü.
+Für mehrere Spieler weitere Gruppen anlegen, zum Beispiel `BLUE_SLOT_Hornet 2`. Alle Gruppen mit `BLUE_SLOT_` am Anfang bekommen die Auftragsmenüs. Nur Gruppen mit `BLUE_SLOT_Chinook`, `BLUE_SLOT_Hind` oder `BLUE_SLOT_Apache` am Anfang bekommen das CTLD-Menü.
 
-### Schritt 11: Skripte einbinden
+### Schritt 12: Skripte einbinden
 
 1. Neuer Trigger, Typ **„Einmalig“** (Once), Name zum Beispiel `Ostwind Start`.
 2. Bedingung: keine. Ereignis: **„Mission Start“**.
@@ -245,7 +279,7 @@ Der Loader lädt alle weiteren Skripte bei jedem Start direkt aus dem Repo-Ordne
 
 **Fertige Version für den Server:** Statt des Loaders alle Skripte ab `01_Config.lua` einzeln per „DO SCRIPT FILE“ einbinden, in der Reihenfolge der Nummern. Sonst fehlen sie auf einem anderen Rechner.
 
-### Schritt 12: Speichern und Sprachdateien packen
+### Schritt 13: Speichern und Sprachdateien packen
 
 1. Mission speichern und den Editor schließen.
 2. Im Repo-Ordner ausführen:
@@ -257,14 +291,14 @@ Der Loader lädt alle weiteren Skripte bei jedem Start direkt aus dem Repo-Ordne
    Das Skript legt eine Sicherung `.miz.bak` an und packt die 110 Sprachdateien in den Ordner `Airboss Soundfiles` der Mission.
 3. Nach jedem weiteren Speichern im Editor prüfen, ob der Ordner noch in der `.miz` ist. Die `.miz` ist ein Zip-Archiv und lässt sich zum Beispiel mit 7-Zip öffnen. Fehlt der Ordner, Punkt 2 wiederholen.
 
-### Schritt 13: Erster Test
+### Schritt 14: Erster Test
 
 1. Mission starten und einen Slot wählen.
 2. Nach dem Start erscheint: „Operation Ostwind. Aktuelles Ziel: Kutaisi“.
 3. Auf der F10-Karte sind die Zonen farbig eingezeichnet.
 4. Am Träger starten nach kurzer Zeit Tanker, AWACS und Hubschrauber.
 5. Nach der Mission in `dcs.log` nach `[Ostwind]` suchen. Zeilen mit `ERROR` zeigen fehlende Namen oder andere Probleme.
-6. Im F10-Menü gibt es „Kampagne > Stand speichern“. Nach dem Speichern liegt der Stand unter `Saved Games\DCS\Missions\Saves\Operation Ostwind\`.
+6. Im F10-Menü gibt es „Kampagne > Lagebericht“ und „Kampagne > Stand speichern“, dazu „Aufträge Boden“ und „Aufträge Luft“. Nach dem Speichern liegt der Stand unter `Saved Games\DCS\Missions\Saves\Operation Ostwind\`.
 7. Mit einem Chinook oder Hind in einer blauen Zone landen, im F10-Menü unter CTLD Truppen laden und in `Zone Kutaisi` absetzen. Sind dort keine roten Einheiten mehr, wird die Zone nach 60 Sekunden blau.
 
 ### Checkliste
@@ -273,10 +307,12 @@ Der Loader lädt alle weiteren Skripte bei jedem Start direkt aus dem Repo-Ordne
 | --- | --- |
 | Flugplätze mit Koalition | 10 |
 | Trigger-Zonen Front | 11 |
-| Trigger-Zonen Luftabwehr, Radar, CAP | 11 |
+| Trigger-Zonen Luftabwehr, Radar, CAP | 13 |
 | Träger-Einheit `CVN-75 Truman` | 1 |
 | Blaue Vorlagen Träger (spät aktiviert) | 5 |
 | Blaue Vorlagen CTLD (spät aktiviert) | 6 |
+| Blaue Vorlagen KI (spät aktiviert) | 9 |
+| Blaue Lagerhäuser (statisch) | 2 |
 | Rote Vorlagen Boden (spät aktiviert) | 6 |
 | Rote Vorlagen Luftabwehr und Radar (spät aktiviert) | 6 |
 | Rote Vorlagen Jäger (spät aktiviert) | 3 |
@@ -309,6 +345,19 @@ Die aktive Phase ist die erste Phase mit einer Zone, die nicht blau ist. Blau ka
 | 4 und mehr | Hoch | 1,4 | 0,6 |
 
 Der Faktor gilt für die Sollstärke beim Nachschub, für die Größe der Gegenangriffe und für die Zahl gleichzeitiger Abfangeinsätze. Die Besatzungen einer neuen Kampagne entstehen ohne Faktor, weil beim Missionsstart noch niemand im Slot sitzt.
+
+### Blau
+
+- **Besatzungen:** 5 Minuten nach einer Eroberung sichern 2 blaue Gruppen die Zone, mit Faktor Blau. Die zuletzt befreiten Zonen bekommen alle 30 Minuten Nachschub.
+- **AWACS und Tanker:** fliegen dauerhaft ohne Treibstoffsorgen. Geht einer verloren, startet Ersatz.
+- **Jäger:** EASYGCICAP schickt F-15C und F-16C von Kobuleti und Senaki gegen rote Flugzeuge.
+- Blau erobert keine Zonen selbst. Das bleibt Aufgabe der Spieler.
+
+### Aufträge
+
+- **„Aufträge Boden“:** Besatzungen der aktuellen Zielzonen, laufende Gegenangriffe und Luftabwehrstellungen. MOOSE wählt CAS, BAI oder SEAD.
+- **„Aufträge Luft“:** Abfangaufträge gegen Flugzeuge, die AWACS oder Radar sehen.
+- **„Kampagne > Lagebericht“:** Phase, Ziel mit Feindstärke, befreite Zonen, Gegenangriffe, Feindaktivität und der nächste Transportauftrag.
 
 ### Truppen und Fracht
 
@@ -359,9 +408,10 @@ Die Sprachdateien stammen aus [MOOSE_SOUND](https://github.com/FlightControl-Mas
 | 04_Scaling.lua | fertig |
 | 05_Red.lua | fertig |
 | 07_Carrier.lua | fertig |
+| 06_Blue.lua | fertig |
 | 08_CTLD.lua | fertig |
+| 09_Tasks.lua | fertig |
 | 10_Save.lua | fertig |
 | tools/pack_sounds.py | fertig |
-| 06_Blue.lua, 09_Tasks.lua | offen |
 
-Alle fertigen Skripte sind außerhalb von DCS mit nachgebauten DCS- und MOOSE-Funktionen getestet. Ein Test in DCS steht noch aus.
+Alle Skripte sind außerhalb von DCS mit nachgebauten DCS- und MOOSE-Funktionen getestet. Ein Test in DCS steht noch aus.

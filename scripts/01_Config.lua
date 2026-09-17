@@ -191,6 +191,88 @@ OSTWIND.Config = {
     },
   },
 
+  -- Blaue KI -----------------------------------------------------------------
+  -- Alle Vorlagen: Koalition Blau, spät aktiviert.
+  -- Blau unterstützt, erobert aber keine Zonen selbst.
+
+  Blue = {
+
+    -- Besatzungen in eroberten Zonen. Treffen ArrivalDelay Sekunden nach
+    -- der Eroberung ein. Die Startzonen an der Küste bleiben leer.
+    Garrison = {
+      Enabled      = true,
+      Groups       = 2,         -- Grundwert je Zone, skaliert mit der Stufe
+      ArrivalDelay = 300,
+      SpawnRadius  = 0.5,
+      Templates    = {
+        "BLUE_TPL_GAR_Armor",
+        "BLUE_TPL_GAR_IFV",
+        "BLUE_TPL_GAR_AD",
+      },
+      -- Nachschub für die zuletzt befreiten Zonen (Ziel roter Gegenangriffe)
+      Reinforce = { Enabled = true, Interval = 1800, PerRound = 1 },
+    },
+
+    -- AWACS und Tanker von Land. Route, Umlaufbahn, Funk und Rufzeichen
+    -- kommen aus der Vorlage im Editor. Das Skript hält je Vorlage
+    -- ein Flugzeug in der Luft und ersetzt es, wenn es verloren geht.
+    Support = {
+      Enabled       = true,
+      UnlimitedFuel = true,       -- kein Rückflug wegen Treibstoff
+      CheckInterval = 120,        -- Sekunden zwischen zwei Prüfungen
+      Templates = {
+        { Template = "BLUE_TPL_AWACS",        Alias = "BLUE AWACS" },
+        { Template = "BLUE_TPL_TANKER_Boom",  Alias = "BLUE TANKER Boom" },
+        { Template = "BLUE_TPL_TANKER_Probe", Alias = "BLUE TANKER Probe" },
+      },
+    },
+
+    -- Blaues Frühwarnradar an einer Trigger-Zone
+    Ewr = { Enabled = true, Zone = "BLUE EWR", Template = "BLUE_TPL_EWR", Alias = "BLUE EWR" },
+
+    -- Blaue Jäger mit EASYGCICAP. Jeder Flugplatz braucht ein blaues
+    -- statisches Lagerhaus mit dem Namen des Flugplatzes.
+    Air = {
+      Enabled      = true,
+      Skill        = "GOOD",
+      MaxMissions  = 2,           -- skaliert mit der Stufe (Faktor Blau)
+      MissionRange = 100,         -- NM
+      CapAltitude  = 22000,
+      CapSpeed     = 350,
+      CapLeg       = 15,
+      Wings = {
+        { Airbase = "Kobuleti", CapZone = "BLUE CAP Front",
+          Squadrons = { { Template = "BLUE_TPL_CAP_F15", Name = "Kobuleti F-15C", Airframes = 12 } } },
+        { Airbase = "Senaki-Kolkhi",
+          Squadrons = { { Template = "BLUE_TPL_CAP_F16", Name = "Senaki F-16C", Airframes = 12 } } },
+      },
+    },
+  },
+
+  -- Aufträge für Spieler (09_Tasks.lua) ----------------------------------------
+
+  Tasks = {
+    Enabled = true,
+    Locale  = "de",
+    -- Boden: Ziele kommen von der roten Seite (Besatzungen der Front,
+    -- Gegenangriffe, Luftabwehr). MOOSE wählt CAS, BAI oder SEAD selbst.
+    A2G = {
+      Enabled      = true,
+      MenuName     = "Aufträge Boden",
+      ScanInterval = 60,
+      Garrisons    = true,
+      Attacks      = true,
+      AirDefense   = true,
+    },
+    -- Luft: Abfangaufträge aus der Aufklärung von AWACS und Radar
+    A2A = {
+      Enabled  = true,
+      MenuName = "Aufträge Luft",
+    },
+    -- F10 "Kampagne > Lagebericht"
+    Report = true,
+  },
+
   -- Carrier Strike Group (AIRBOSS) ------------------------------------------
   -- Alle Namen müssen im Editor exakt so existieren.
   -- Der Träger fährt immer seine Route aus dem Editor. Er dreht sich
@@ -303,6 +385,14 @@ function OSTWIND.Debug(Text)
     OSTWIND.Log("DEBUG " .. tostring(Text))
     trigger.action.outText("[Ostwind] " .. tostring(Text), 10)
   end
+end
+
+-- Gemeinsames F10-Menü "Kampagne" für Blau. Wird beim ersten Aufruf angelegt.
+function OSTWIND.CampaignMenu()
+  if not OSTWIND.MenuRoot then
+    OSTWIND.MenuRoot = missionCommands.addSubMenuForCoalition(coalition.side.BLUE, "Kampagne")
+  end
+  return OSTWIND.MenuRoot
 end
 
 OSTWIND.Log("Config geladen, Version " .. OSTWIND.Version)

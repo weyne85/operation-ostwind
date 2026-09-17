@@ -63,8 +63,7 @@ local function OnMissionEnd()
 end
 
 local function SetupMenu()
-  local Root = missionCommands.addSubMenuForCoalition(coalition.side.BLUE, "Kampagne")
-  missionCommands.addCommandForCoalition(coalition.side.BLUE, "Stand speichern", Root, function()
+  missionCommands.addCommandForCoalition(coalition.side.BLUE, "Stand speichern", OSTWIND.CampaignMenu(), function()
     if Save:Now("F10-Menü") then
       MESSAGE:New("Kampagne gespeichert.", 10):ToBlue()
     else
