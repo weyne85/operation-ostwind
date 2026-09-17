@@ -1,0 +1,12 @@
+# Spielstände (werden von der Mission erzeugt)
+saves/
+*.sav.lua
+
+# MOOSE wird nicht mitversioniert, siehe README
+scripts/00_Moose.lua
+Moose*.lua
+
+# System
+Thumbs.db
+desktop.ini
+.DS_Store
