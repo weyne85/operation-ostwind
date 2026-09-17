@@ -22,6 +22,14 @@ OSTWIND.Config = {
     Interval = 300,           -- Sekunden zwischen automatischen Speicherungen
     -- Ordner unter "Saved Games/DCS/". Wird in 02_Persistence.lua angelegt.
     Folder   = "Missions/Saves/Operation Ostwind/",
+    FileName = "Ostwind.sav.lua",
+    -- Erhöhen, wenn sich der Aufbau des Spielstands so ändert, dass alte
+    -- Spielstände nicht mehr passen. Alte Stände werden dann gesichert
+    -- und die Kampagne beginnt neu.
+    SchemaVersion = 1,
+    -- true: Spielstand beim nächsten Start ignorieren und neu beginnen.
+    -- Der alte Stand wird als .reset.bak gesichert. Danach wieder auf false.
+    Reset = false,
   },
 
   -- Flugplätze --------------------------------------------------------------
@@ -35,14 +43,17 @@ OSTWIND.Config = {
   -- Frontverlauf ------------------------------------------------------------
   -- Jede Zone muss im Editor als Trigger-Zone mit genau diesem Namen existieren.
   -- Phase 0 gehört zu Beginn Blau, alle anderen Rot.
-  -- Phase 2 enthält noch Platzhalter. Namen festlegen, sobald die Zonen stehen.
+  -- Die Phasen folgen der Hauptstraße von West nach Ost. Zonen einer Phase
+  -- können gleichzeitig angegriffen werden.
 
   Phases = {
     [0] = { "Zone Batumi", "Zone Kobuleti", "Zone Senaki" },
     [1] = { "Zone Kutaisi" },
-    [2] = { "Zone Zwischen 1", "Zone Zwischen 2" },
-    [3] = { "Zone Gori" },
-    [4] = { "Zone Tbilisi", "Zone Soganlug", "Zone Vaziani" },
+    [2] = { "Zone Zestafoni" },
+    [3] = { "Zone Rikoti" },       -- Rikoti-Pass bei Kharagauli
+    [4] = { "Zone Khashuri" },
+    [5] = { "Zone Gori" },
+    [6] = { "Zone Tbilisi", "Zone Soganlug", "Zone Vaziani" },
   },
 
   -- Schwierigkeit nach Spielerzahl ------------------------------------------

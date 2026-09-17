@@ -42,6 +42,18 @@ scripts/
 └── 09_Save.lua
 ```
 
+## Spielstand
+
+Liegt unter `Saved Games/DCS/Missions/Saves/Operation Ostwind/`:
+
+| Datei | Inhalt |
+| --- | --- |
+| `Ostwind.sav.lua` | aktueller Stand |
+| `Ostwind.sav.lua.bak` | vorheriger Stand, wird geladen, wenn der aktuelle defekt ist |
+| `*.reset.bak`, `*.v<N>.bak`, `*.defekt.bak` | Sicherungen bei Reset, Versionswechsel oder defekter Datei |
+
+**Neue Kampagne starten:** In `01_Config.lua` `Save.Reset = true` setzen, Mission einmal starten, danach wieder auf `false`.
+
 ## Einbinden im Missionseditor
 
 Trigger "Mission Start" mit zwei Aktionen "DO SCRIPT FILE":
@@ -57,5 +69,6 @@ Trigger "Mission Start" mit zwei Aktionen "DO SCRIPT FILE":
 | --- | --- |
 | 00_Loader.lua | fertig |
 | 01_Config.lua | fertig |
+| 02_Persistence.lua | fertig |
 | 04_Scaling.lua | fertig |
 | übrige | offen |
