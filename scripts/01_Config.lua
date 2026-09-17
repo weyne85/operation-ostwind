@@ -71,6 +71,95 @@ OSTWIND.Config = {
     VictoryFlag   = "OstwindSieg", -- Wird 1, wenn alle Zonen blau sind
   },
 
+  -- Rot ----------------------------------------------------------------------
+  -- Alle Vorlagen: Koalition Rot, spät aktiviert, beliebiger Ort.
+  -- Siehe README, Abschnitt "Anleitung Missionseditor".
+
+  Red = {
+
+    -- Besatzungen der roten Zonen. Werden per Skript erzeugt, nicht im Editor.
+    Garrison = {
+      Groups    = 3,          -- Gruppen je Zone bei neuer Kampagne
+      PerZone   = {           -- Abweichende Werte für einzelne Zonen
+        ["Zone Kutaisi"] = 4,
+        ["Zone Gori"]    = 4,
+        ["Zone Tbilisi"] = 5,
+      },
+      Templates = {           -- Pro Gruppe wird zufällig eine Vorlage gewählt
+        "RED_TPL_GAR_Armor",
+        "RED_TPL_GAR_IFV",
+        "RED_TPL_GAR_Infantry",
+        "RED_TPL_GAR_AAA",
+      },
+      SpawnRadius = 0.7,      -- Anteil des Zonenradius, in dem gespawnt wird
+      -- Nachschub: Frontzonen werden bis zur Sollstärke aufgefüllt.
+      -- Sollstärke = Groups (oder PerZone) mal Faktor der Schwierigkeitsstufe.
+      Reinforce = {
+        Enabled  = true,
+        Interval = 1800,      -- Sekunden zwischen zwei Nachschub-Runden
+        PerRound = 1,         -- Gruppen je Zone und Runde
+      },
+    },
+
+    -- Gegenangriffe auf die zuletzt befreiten Zonen
+    Counterattack = {
+      Enabled    = true,
+      FirstDelay = 1800,      -- Sekunden bis zum ersten möglichen Angriff
+      Interval   = 2700,      -- Sekunden zwischen zwei Angriffen
+      Variation  = 0.3,       -- Zufällige Abweichung vom Intervall (0.3 = 30 %)
+      Groups     = 2,         -- Gruppen je Angriff, skaliert mit der Stufe
+      Speed      = 40,        -- km/h
+      AllowPhase0 = false,    -- true: auch die Startzonen an der Küste angreifen
+      Templates  = {
+        "RED_TPL_ATK_Armor",
+        "RED_TPL_ATK_Mech",
+      },
+    },
+
+    -- Luftabwehr mit MANTIS. Stellungen werden per Skript an Trigger-Zonen erzeugt.
+    -- Link: Die Stellung gibt es nur, solange diese Zone rot ist.
+    -- Ohne Link steht sie immer, bis sie zerstört ist.
+    AirDefense = {
+      Enabled   = true,
+      SamPrefix = "RED SAM",  -- Namensanfang der erzeugten Stellungen
+      EwrPrefix = "RED EWR",
+      Sites = {
+        { Name = "Kutaisi",   Zone = "SAM Kutaisi",   Template = "RED_TPL_SAM_SA11", Link = "Zone Kutaisi" },
+        { Name = "Zestafoni", Zone = "SAM Zestafoni", Template = "RED_TPL_SAM_SA8",  Link = "Zone Zestafoni" },
+        { Name = "Rikoti",    Zone = "SAM Rikoti",    Template = "RED_TPL_SAM_SA15", Link = "Zone Rikoti" },
+        { Name = "Khashuri",  Zone = "SAM Khashuri",  Template = "RED_TPL_SAM_SA6",  Link = "Zone Khashuri" },
+        { Name = "Gori",      Zone = "SAM Gori",      Template = "RED_TPL_SAM_SA11", Link = "Zone Gori" },
+        { Name = "Tbilisi",   Zone = "SAM Tbilisi",   Template = "RED_TPL_SAM_SA10", Link = "Zone Tbilisi" },
+        { Name = "Vaziani",   Zone = "SAM Vaziani",   Template = "RED_TPL_SAM_SA15", Link = "Zone Vaziani" },
+      },
+      Ewr = {
+        { Name = "West", Zone = "EWR West", Template = "RED_TPL_EWR" },
+        { Name = "Ost",  Zone = "EWR Ost",  Template = "RED_TPL_EWR" },
+      },
+    },
+
+    -- Rote Jäger mit EASYGCICAP. Die Flugplätze liegen in Russland und
+    -- sind nicht Teil der Front. Jeder Flugplatz braucht im Editor ein
+    -- rotes statisches Objekt (Lagerhaus), das genau wie der Flugplatz heißt.
+    Air = {
+      Enabled      = true,
+      Skill        = "AVERAGE",   -- AVERAGE, GOOD, HIGH oder EXCELLENT
+      MaxMissions  = 3,           -- Gleichzeitige Abfangeinsätze, skaliert mit der Stufe
+      MissionRange = 150,         -- NM
+      CapAltitude  = 25000,       -- Fuß
+      CapSpeed     = 350,         -- Knoten
+      CapLeg       = 15,          -- NM
+      Wings = {
+        { Airbase = "Nalchik", CapZone = "RED CAP West",
+          Squadrons = { { Template = "RED_TPL_CAP_MiG29", Name = "Nalchik MiG-29S", Airframes = 12 } } },
+        { Airbase = "Beslan",  CapZone = "RED CAP Ost",
+          Squadrons = { { Template = "RED_TPL_CAP_Su27",  Name = "Beslan Su-27",    Airframes = 12 } } },
+        { Airbase = "Mozdok",
+          Squadrons = { { Template = "RED_TPL_GCI_MiG31", Name = "Mozdok MiG-31",   Airframes = 8 } } },
+      },
+    },
+  },
+
   -- Carrier Strike Group (AIRBOSS) ------------------------------------------
   -- Alle Namen müssen im Editor exakt so existieren.
   -- Der Träger fährt immer seine Route aus dem Editor. Er dreht sich
