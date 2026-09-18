@@ -28,11 +28,13 @@ F/A-18C, F-16C, A-10C II, AH-64D, CH-47F, Mi-24P
 
    Nach jedem DCS-Update erneut nötig. Auf einem Server nur vertrauenswürdige Missionen laden.
 3. **Supercarrier-Modul** für den Träger CVN-75.
-4. **Python 3** für `tools/pack_sounds.py`.
+4. **Python 3** für `tools/pack_sounds.py`. Nur wer die Karten der Zonen neu erzeugen will, braucht zusätzlich Pillow (`pip install pillow`).
 
 ## Aufbau
 
 ```text
+docs/
+└── karte_*.png        Karten der Trigger-Zonen
 mission/
 ├── (Operation_Ostwind.miz)
 └── sounds/
@@ -52,7 +54,8 @@ scripts/
 ├── 09_Tasks.lua       Aufträge im F10-Menü und Lagebericht
 └── 10_Save.lua        Automatisches Speichern
 tools/
-└── pack_sounds.py     Packt die Sprachdateien in die .miz
+├── pack_sounds.py     Packt die Sprachdateien in die .miz
+└── zone_map.py        Zeichnet die Karten der Trigger-Zonen
 ```
 
 ---
@@ -62,6 +65,17 @@ tools/
 Diese Anleitung baut die Mission von Grund auf. Alle Namen müssen **exakt** so geschrieben werden wie hier, mit Groß- und Kleinschreibung, Leerzeichen und Unterstrichen. Die Skripte finden Einheiten und Zonen nur über den Namen.
 
 Fehlt etwas, läuft die Mission trotzdem. Im `dcs.log` (`Saved Games\DCS\Logs\dcs.log`) steht dann eine Zeile mit `[Ostwind]` und dem fehlenden Namen.
+
+**Wegpunkte im Editor sind nur für diese 4 Gruppen Pflicht.** Die Skripte übernehmen hier die Route aus dem Editor. Fehlt sie, fährt oder fliegt die Einheit nicht wie gedacht.
+
+| Gruppe | Schritt | Welche Wegpunkte |
+| --- | --- | --- |
+| Träger `CVN-75 Truman` | 5 | Mindestens 2 Wegpunkte gegen den Wind, 25 bis 30 Knoten |
+| `BLUE_TPL_AWACS` | 7 | Wegpunkt mit Aufgabe „Umlaufbahn“ (Orbit) |
+| `BLUE_TPL_TANKER_Boom` | 7 | Wegpunkt mit Aktion „Tanker“ und „Umlaufbahn“ |
+| `BLUE_TPL_TANKER_Probe` | 7 | Wegpunkt mit Aktion „Tanker“ und „Umlaufbahn“ |
+
+Alle anderen Vorlagen brauchen **keine** Wegpunkte. Ihre Route legt das Skript selbst fest, eine Route aus dem Editor wird dort ignoriert.
 
 ### Schritt 1: Vorbereitung
 
@@ -90,19 +104,29 @@ Die Skripte erzeugen die roten Besatzungen selbst, zufällig verteilt in den inn
 
 **Mittelpunkt** ist bei Flugplätzen die Mitte der Hauptbahn, bei Städten das Stadtzentrum. Die Lage ist ein Vorschlag. Wichtig ist nur, dass die Zone überwiegend Land abdeckt.
 
-| Phase | Name der Zone | Mittelpunkt | Radius |
-| --- | --- | --- | --- |
-| 0 | `Zone Batumi` | Flugplatz Batumi | 5.000 ft |
-| 0 | `Zone Kobuleti` | Flugplatz Kobuleti | 5.000 ft |
-| 0 | `Zone Senaki` | Flugplatz Senaki-Kolkhi | 5.000 ft |
-| 1 | `Zone Kutaisi` | Flugplatz Kutaisi | 6.500 ft |
-| 2 | `Zone Zestafoni` | Stadt Zestafoni, östlich von Kutaisi | 5.000 ft |
-| 3 | `Zone Rikoti` | Rikoti-Pass an der Hauptstraße zwischen Zestafoni und Khashuri, am Tunnel | 4.000 ft |
-| 4 | `Zone Khashuri` | Stadt Khashuri, westlich von Gori | 5.000 ft |
-| 5 | `Zone Gori` | Stadt Gori | 6.500 ft |
-| 6 | `Zone Tbilisi` | Flugplatz Tbilisi-Lochini | 6.500 ft |
-| 6 | `Zone Soganlug` | Flugplatz Soganlug | 4.000 ft |
-| 6 | `Zone Vaziani` | Flugplatz Vaziani | 5.000 ft |
+**Orte finden:** Die Karten unten zeigen alle Zonen aus Schritt 3 und 4. Die Koordinaten in den Tabellen sind in Grad und Dezimalminuten angegeben. Der Editor zeigt die Koordinaten unter dem Mauszeiger unten in der Statusleiste. So fährst du den Punkt an und setzt dort die Zone. Die Werte stammen aus OpenStreetMap. Die DCS-Karte weicht davon leicht ab, also vor Ort kurz prüfen, ob der Punkt passt.
+
+![Übersicht aller Zonen](docs/karte_uebersicht.png)
+
+![Karte West: Batumi bis Zestafoni](docs/karte_west.png)
+
+![Karte Ost: Zestafoni bis Vaziani](docs/karte_ost.png)
+
+Die Karten erzeugt `tools/zone_map.py` (braucht Pillow). Wer eine Zone verschiebt, trägt die neuen Koordinaten dort und hier ein und lässt das Skript neu laufen.
+
+| Phase | Name der Zone | Mittelpunkt | Koordinaten | Radius |
+| --- | --- | --- | --- | --- |
+| 0 | `Zone Batumi` | Flugplatz Batumi | N 41°36.6' E 41°36.0' | 5.000 ft |
+| 0 | `Zone Kobuleti` | Flugplatz Kobuleti | N 41°50.4' E 41°48.0' | 5.000 ft |
+| 0 | `Zone Senaki` | Flugplatz Senaki-Kolkhi | N 42°14.7' E 42°03.0' | 5.000 ft |
+| 1 | `Zone Kutaisi` | Flugplatz Kutaisi | N 42°10.7' E 42°29.5' | 6.500 ft |
+| 2 | `Zone Zestafoni` | Stadt Zestafoni, östlich von Kutaisi | N 42°06.4' E 43°02.4' | 5.000 ft |
+| 3 | `Zone Rikoti` | Rikoti-Pass an der Hauptstraße zwischen Zestafoni und Khashuri, am Tunnel | N 42°03.0' E 43°29.6' | 4.000 ft |
+| 4 | `Zone Khashuri` | Stadt Khashuri, westlich von Gori | N 41°59.8' E 43°35.9' | 5.000 ft |
+| 5 | `Zone Gori` | Stadt Gori | N 41°58.9' E 44°06.7' | 6.500 ft |
+| 6 | `Zone Tbilisi` | Flugplatz Tbilisi-Lochini | N 41°40.1' E 44°57.4' | 6.500 ft |
+| 6 | `Zone Soganlug` | Flugplatz Soganlug | N 41°39.0' E 44°56.2' | 4.000 ft |
+| 6 | `Zone Vaziani` | Flugplatz Vaziani | N 41°37.8' E 45°02.2' | 5.000 ft |
 
 **Wichtig:** Keine eigenen roten Bodeneinheiten in diese Zonen stellen. Sie würden nach dem Laden eines Spielstands eine schon befreite Zone sofort zurückerobern.
 
@@ -110,23 +134,23 @@ Die Skripte erzeugen die roten Besatzungen selbst, zufällig verteilt in den inn
 
 Bei diesen Zonen zählt nur der **Mittelpunkt**. Dort entsteht die Stellung, mit derselben Aufstellung wie in der Vorlage. Der Radius ist egal. Nimm einen kleinen Wert, damit die Karte übersichtlich bleibt.
 
-Stell die Stellungen auf freies, flaches Gelände, nicht in Wald oder auf Gebäude.
+Stell die Stellungen auf freies, flaches Gelände, nicht in Wald oder auf Gebäude. Die Koordinaten unten sind so gewählt: SAM-Stellungen auf flachem Gelände ohne Bebauung, Radare auf Anhöhen. Geprüft ist das mit Höhendaten und OpenStreetMap, nicht in DCS selbst.
 
-| Name der Zone | Mittelpunkt (Vorschlag) | Radius |
-| --- | --- | --- |
-| `SAM Kutaisi` | 3 bis 5 NM östlich des Flugplatzes Kutaisi | 500 ft |
-| `SAM Zestafoni` | am Ostrand von Zestafoni | 500 ft |
-| `SAM Rikoti` | an der Hauptstraße östlich des Passes | 500 ft |
-| `SAM Khashuri` | 2 bis 3 NM östlich von Khashuri | 500 ft |
-| `SAM Gori` | 3 bis 5 NM östlich von Gori | 500 ft |
-| `SAM Tbilisi` | 8 bis 10 NM östlich von Tiflis (SA-10, weite Reichweite) | 500 ft |
-| `SAM Vaziani` | am Flugplatz Vaziani | 500 ft |
-| `EWR West` | auf einer Anhöhe nördlich von Kutaisi | 500 ft |
-| `EWR Ost` | auf einer Anhöhe nördlich von Gori | 500 ft |
-| `RED CAP West` | über den Bergen zwischen Kutaisi und Nalchik | 5.000 ft |
-| `RED CAP Ost` | über den Bergen zwischen Gori und Beslan | 5.000 ft |
-| `BLUE EWR` | auf einer Anhöhe bei Kobuleti (blaues Radar) | 500 ft |
-| `BLUE CAP Front` | über der Linie Senaki und Kutaisi (blaue CAP) | 5.000 ft |
+| Name der Zone | Mittelpunkt (Vorschlag) | Koordinaten | Radius |
+| --- | --- | --- | --- |
+| `SAM Kutaisi` | 4 NM östlich des Flugplatzes Kutaisi, freies Feld | N 42°10.8' E 42°34.8' | 500 ft |
+| `SAM Zestafoni` | am Nordostrand von Zestafoni, außerhalb der Bebauung | N 42°07.4' E 43°04.0' | 500 ft |
+| `SAM Rikoti` | an der Hauptstraße östlich des Passes, oberhalb von Surami | N 42°02.5' E 43°31.5' | 500 ft |
+| `SAM Khashuri` | 3 NM östlich von Khashuri | N 41°59.7' E 43°39.6' | 500 ft |
+| `SAM Gori` | 3,5 NM östlich von Gori | N 41°58.2' E 44°11.4' | 500 ft |
+| `SAM Tbilisi` | 10 NM östlich von Tiflis, nordöstlich des Flugplatzes Lochini (SA-10, weite Reichweite) | N 41°43.3' E 45°01.8' | 500 ft |
+| `SAM Vaziani` | am Nordwestrand des Flugplatzes Vaziani | N 41°38.4' E 45°01.2' | 500 ft |
+| `EWR West` | auf einer Anhöhe nördlich von Kutaisi, etwa 800 m hoch | N 42°25.2' E 42°36.3' | 500 ft |
+| `EWR Ost` | auf einer Anhöhe nördlich von Gori, etwa 800 m hoch | N 42°08.1' E 44°11.1' | 500 ft |
+| `RED CAP West` | über den Bergen zwischen Kutaisi und Nalchik | N 42°51.0' E 43°03.6' | 5.000 ft |
+| `RED CAP Ost` | über den Bergen zwischen Gori und Beslan | N 42°35.4' E 44°21.6' | 5.000 ft |
+| `BLUE EWR` | auf einer Anhöhe östlich von Kobuleti, etwa 550 m hoch (blaues Radar) | N 41°49.5' E 41°56.7' | 500 ft |
+| `BLUE CAP Front` | über der Linie Senaki und Kutaisi (blaue CAP) | N 42°12.6' E 42°16.2' | 5.000 ft |
 
 Die SAM-Stellungen verschwinden, sobald Blau die zugehörige Zone erobert. Zerstörte Stellungen kommen auch nach dem Laden nicht zurück. Eine Stellung gilt als zerstört, wenn kein Radar mehr lebt.
 
@@ -137,7 +161,7 @@ Die SAM-Stellungen verschwinden, sobald Blau die zugehörige Zone erobert. Zerst
    - **Einheitenname: `CVN-75 Truman`** (der Name der Einheit zählt, nicht der Gruppenname)
    - **Nicht** spät aktiviert
    - Position: etwa 30 NM westlich von Batumi auf offener See
-2. **Route des Trägers:** mindestens 2 Wegpunkte, Geschwindigkeit etwa 25 bis 30 Knoten.
+2. **Route des Trägers (Pflicht):** mindestens 2 Wegpunkte, Geschwindigkeit etwa 25 bis 30 Knoten. Der Träger fährt nur diese Route. Ohne Wegpunkte bleibt er stehen, dann fehlt der Wind über dem Deck für die Landung.
    - Der Träger dreht sich **nicht** selbst in den Wind. Leg die Route deshalb möglichst **gegen den Wind**. Weht der Wind aus 270°, fährt der Träger Kurs 270°.
    - Am letzten Wegpunkt fährt der Träger automatisch zum ersten zurück. Lange Strecken halten ihn länger auf gutem Kurs.
    - Genug Abstand zur Küste halten, auch am Ende der Route.
@@ -190,6 +214,8 @@ Alle auf **Blau**, alle mit **„Späte Aktivierung“**. Einheitennamen sind fr
 | `BLUE_TPL_GAR_AD` | 1 × M1097 Avenger, 1 × M6 Linebacker |
 
 **AWACS und Tanker von Land.** Diese Vorlagen fliegen genau so, wie du sie im Editor anlegst. Das Skript hält sie nur dauerhaft in der Luft.
+
+**Diese 3 Vorlagen brauchen zwingend Wegpunkte.** Anders als bei den übrigen Vorlagen gibt das Skript hier keine Route vor. Leg nach dem Start mindestens einen Wegpunkt an und gib ihm die Aufgabe „Umlaufbahn“ (Orbit), bei den Tankern zusätzlich die Aktion „Tanker“. Ohne Umlaufbahn fliegen die Maschinen ihre Route einmal ab und landen wieder.
 
 | Gruppenname | Typ | Start | Route und Aufgabe |
 | --- | --- | --- | --- |
