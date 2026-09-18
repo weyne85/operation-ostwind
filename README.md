@@ -197,13 +197,13 @@ Alle auf **Blau**, alle mit **„Späte Aktivierung“**. Einheitennamen sind fr
 | `BLUE_TPL_TANKER_Boom` | KC-135 | Kobuleti | Aufgabe Tanker, Aktion „Tanker“ und „Umlaufbahn“ westlich von Senaki, 20.000 ft. Funk, Rufzeichen und TACAN in der Vorlage setzen, zum Beispiel 251.0 AM, Texaco 1, TACAN 51X |
 | `BLUE_TPL_TANKER_Probe` | KC-135MPRS | Kobuleti | wie oben, zum Beispiel 252.0 AM, Shell 1, TACAN 52X |
 
-**Radar und Jäger.** Ort beliebig.
+**Radar und Jäger.** Ort beliebig, aber auch hier **„Späte Aktivierung“** setzen. Das sind reine Vorlagen: Das Skript setzt das Radar selbst in die Zone `BLUE EWR` und lässt die Jäger von Kobuleti und Senaki starten.
 
-| Gruppenname | Typ | Anzahl |
-| --- | --- | --- |
-| `BLUE_TPL_EWR` | EWR AN/FPS-117 oder 1L13 | 1 |
-| `BLUE_TPL_CAP_F15` | F-15C | 2 |
-| `BLUE_TPL_CAP_F16` | F-16C | 2 |
+| Gruppenname | Typ | Anzahl | Hinweis |
+| --- | --- | --- | --- |
+| `BLUE_TPL_EWR` | EWR AN/FPS-117 oder 1L13 | 1 | Späte Aktivierung. Wird an der Zone `BLUE EWR` erzeugt, nicht am Ort der Vorlage. |
+| `BLUE_TPL_CAP_F15` | F-15C | 2 | Späte Aktivierung. Sonst fliegt die Vorlage bei Missionsstart selbst los. |
+| `BLUE_TPL_CAP_F16` | F-16C | 2 | Späte Aktivierung. Sonst fliegt die Vorlage bei Missionsstart selbst los. |
 
 **Lagerhäuser:** Auf zwei Flugplätzen ein **statisches Objekt** auf **Blau**, Typ **Lagerhaus**. Der Name muss genau wie der Flugplatz lauten: `Kobuleti` und `Senaki-Kolkhi`.
 
